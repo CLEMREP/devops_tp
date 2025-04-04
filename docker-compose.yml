@@ -1,1 +1,94 @@
 services:
+  seed:
+    build:
+      context: seed-data
+      dockerfile: Dockerfile
+    networks:
+      - front-net
+    depends_on:
+      - nginx
+
+  result:
+    build:
+      context: result
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - front-net
+      - back-net
+    depends_on:
+      - db
+
+  nginx:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    networks:
+      - front-net
+    depends_on:
+      - vote-1
+      - vote-2
+
+  vote-1:
+    build:
+      context: vote
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5000"
+    networks:
+      - front-net
+      - back-net
+    depends_on:
+      - redis
+
+  vote-2:
+    build:
+      context: vote
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5000"
+    networks:
+      - front-net
+      - back-net
+    depends_on:
+      - redis
+
+
+  worker:
+    build:
+      context: worker
+      dockerfile: Dockerfile
+    networks:
+      - back-net
+    depends_on:
+      - redis
+      - db
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - back-net
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: vote
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+networks:
+  front-net:
+  back-net:
+
+volumes:
+  db-data:
+    driver: local
