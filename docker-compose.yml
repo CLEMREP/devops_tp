@@ -57,9 +57,6 @@ services:
     build:
       context: worker
       dockerfile: Dockerfile
-      args:
-        TARGETARCH: amd64
-        BUILDPLATFORM: linux/amd64
     networks:
       - back-net
     depends_on:
