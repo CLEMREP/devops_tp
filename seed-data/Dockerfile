@@ -1,13 +1,18 @@
-FROM python:3.9-slim
-
-RUN apt-get update \
-    && apt-get install -y apache2-utils \
-    && apt-get clean
+FROM python:3.9-slim AS builder
 
 WORKDIR /app
 
 COPY . .
 
 RUN python make-data.py
+
+FROM alpine:3.21
+
+RUN apk add --no-cache \
+    apache2-utils
+
+COPY --from=builder /app/posta /posta
+
+COPY --from=builder /app/postb /postb
 
 ENTRYPOINT ["sh", "generate-votes.sh"]
