@@ -6,7 +6,7 @@ services:
     networks:
       - front-net
     depends_on:
-      - nginx
+      - loadbalancer
 
   result:
     build:
@@ -20,7 +20,7 @@ services:
     depends_on:
       - db
 
-  nginx:
+  loadbalancer:
     build:
       context: nginx
       dockerfile: Dockerfile
@@ -36,8 +36,6 @@ services:
     build:
       context: vote
       dockerfile: Dockerfile
-    ports:
-      - "5001:5000"
     networks:
       - front-net
       - back-net
@@ -48,8 +46,6 @@ services:
     build:
       context: vote
       dockerfile: Dockerfile
-    ports:
-      - "5002:5000"
     networks:
       - front-net
       - back-net
@@ -84,6 +80,8 @@ services:
       - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
+    networks:
+      - back-net
 
 networks:
   front-net:
