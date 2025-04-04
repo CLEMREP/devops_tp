@@ -6,7 +6,7 @@ services:
     networks:
       - front-net
     depends_on:
-      - loadbalancer
+      - nginx
 
   result:
     build:
@@ -20,7 +20,7 @@ services:
     depends_on:
       - db
 
-  loadbalancer:
+  nginx:
     build:
       context: nginx
       dockerfile: Dockerfile
