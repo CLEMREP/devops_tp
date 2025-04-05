@@ -15,4 +15,6 @@ COPY --from=builder /app/posta /posta
 
 COPY --from=builder /app/postb /postb
 
+COPY generate-votes.sh /generate-votes.sh
+
 ENTRYPOINT ["sh", "generate-votes.sh"]
