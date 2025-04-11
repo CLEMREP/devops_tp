@@ -11,4 +11,6 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: seed
-          image: vote-app/seed
+          image: seed
+          imagePullPolicy: Never
+

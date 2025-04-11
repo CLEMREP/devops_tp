@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: vote-app/nginx
+          image: docker.io/vote-app/nginx:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 80
 ---
