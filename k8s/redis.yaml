@@ -20,17 +20,8 @@ spec:
       image: redis:7-alpine
       ports:
         - containerPort: 6379
-      volumeMounts:
-        - name: redis-health
-          mountPath: /data/redis.sh
-          subPath: redis.sh
       readinessProbe:
         exec:
-          command: ["sh", "/data/redis.sh"]
+          command: ["CMD", "redis-cli", "ping"]
         initialDelaySeconds: 5
         periodSeconds: 10
-  volumes:
-    - name: redis-health
-      hostPath:
-        path: ./healthchecks
-        type: Directory
