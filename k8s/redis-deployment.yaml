@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml
+    kompose.version: 1.35.0 (HEAD)
+  labels:
+    io.kompose.service: redis
+  name: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: redis
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml
+        kompose.version: 1.35.0 (HEAD)
+      labels:
+        io.kompose.service: redis
+    spec:
+      containers:
+        - image: redis:7-alpine
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - /data/redis.sh
+            failureThreshold: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+          name: redis
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /data/redis.sh
+              name: redis-cm0
+              subPath: redis.sh
+      restartPolicy: Always
+      volumes:
+        - configMap:
+            items:
+              - key: redis.sh
+                path: redis.sh
+            name: redis-cm0
+          name: redis-cm0
