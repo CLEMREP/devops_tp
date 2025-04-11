@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: result
-          image: docker.io/vote-app/result:latest
+          image: vote-app/result
           imagePullPolicy: Never
           ports:
             - containerPort: 3000

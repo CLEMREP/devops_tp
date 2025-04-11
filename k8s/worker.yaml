@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: worker
-          image: docker.io/vote-app/worker:latest
+          image: vote-app/worker
           imagePullPolicy: Never
 
