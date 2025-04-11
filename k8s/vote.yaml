@@ -17,7 +17,7 @@ spec:
           image: vote-app/vote
           imagePullPolicy: Never
           ports:
-            - containerPort: 80
+            - containerPort: 5000
 ---
 apiVersion: v1
 kind: Service
@@ -28,4 +28,5 @@ spec:
   selector:
     app: vote
   ports:
-    - port: 80
+    - port: 5000
+      targetPort: 5000
