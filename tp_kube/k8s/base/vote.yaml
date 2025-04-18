@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: vote
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: vote
@@ -37,3 +37,22 @@ spec:
   ports:
     - port: 80
       targetPort: 5000
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: vote
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: vote
+  minReplicas: 1
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50
