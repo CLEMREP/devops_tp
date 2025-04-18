@@ -65,8 +65,12 @@ services:
 
   redis:
     image: redis:7-alpine
+    volumes:
+      - ./healthchecks/redis.sh:/data/redis.sh
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli", "ping"]
+      # test: ["CMD-SHELL", "redis-cli", "ping"]
+      # Other way to check redis health
+      test: ["CMD-SHELL", "sh", "/data/redis.sh"]
       interval: 10s
       timeout: 5s
       retries: 5
