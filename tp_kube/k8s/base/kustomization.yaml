@@ -1,7 +1,0 @@
-resources:
-  - postgres.yaml
-  - redis.yaml
-  - result.yaml
-  - seed.yaml
-  - vote.yaml
-  - worker.yaml
