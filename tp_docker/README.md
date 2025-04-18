@@ -20,12 +20,12 @@ graph TD
   end
 
   seed --> nginx
-  nginx --> vote1
-  nginx --> vote2
-
-  vote1 --> redis
-  vote2 --> redis
-
+  nginx --> vote-1
+  nginx --> vote-2
+  
+  vote-1 --> redis
+  vote-2 --> redis
+  
   result_back --> db
   worker --> redis
   worker --> db
@@ -33,8 +33,7 @@ graph TD
   redis -.-> redisHealth[healthcheck]
   db -.-> dbHealth[healthcheck]
 
-  %% Map dual-network services
   result_front --- result_back
-  vote1 --- vote1_back
-  vote2 --- vote2_back
+  vote-1 --- vote1_back
+  vote-2 --- vote2_back
 ```
