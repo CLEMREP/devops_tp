@@ -1,22 +1,30 @@
 #!/bin/bash
 
-URL="http://localhost"
-MAX_CONCURRENT_REQUESTS=100
-STEP=10
-DELAY=2  # secondes entre chaque palier
+# Configuration
+URL="http://localhost:8000"
+TOTAL_VOTES=100
+DELAY=0.1  # Delay between requests in seconds
 
-echo "🔁 Début du test de montée en charge sur $URL"
+# Vote options — you can change these to match OPTION_A and OPTION_B
+OPTIONS=("Cats" "Dogs")
 
-for ((i=1; i<=MAX_CONCURRENT_REQUESTS; i+=STEP)); do
-  echo "🚀 Envoi de $i requêtes en parallèle..."
+echo "🐾 Starting vote simulation to $URL..."
 
-  for ((j=1; j<=i; j++)); do
-    curl -s -o /dev/null "$URL" &
-  done
+for ((i=1; i<=TOTAL_VOTES; i++)); do
+  VOTE=${OPTIONS[$RANDOM % ${#OPTIONS[@]}]}
+  VOTER_ID=$(openssl rand -hex 8)
 
-  wait  # attendre que toutes les requêtes se terminent
-  echo "✅ $i requêtes envoyées. Pause de $DELAY sec."
+  echo "🗳️  Sending vote #$i: $VOTE from voter_id=$VOTER_ID"
+
+  curl -s -X POST "$URL" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -H "Cookie: voter_id=$VOTER_ID" \
+    --data "vote=$VOTE" > /dev/null &
+
   sleep $DELAY
 done
 
-echo "✅ Test de montée en charge terminé."
+# Wait for all background requests to finish
+wait
+
+echo "✅ Finished sending $TOTAL_VOTES simulated votes!"
