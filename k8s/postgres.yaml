@@ -27,7 +27,7 @@ spec:
           value: "postgres"
       ports:
         - containerPort: 5432
-      readinessProbe:
+      livenessProbe:
         exec:
           command:
             - sh
