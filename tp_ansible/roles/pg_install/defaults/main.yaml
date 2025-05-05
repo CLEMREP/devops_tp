@@ -1,2 +1,4 @@
 ---
-postgresql_version: 15
+postgresql_packages:
+  - postgresql-15
+  - python3-psycopg2

@@ -1,0 +1,62 @@
+- name: Démarrer et activer le service postgresql
+  ansible.builtin.service:
+    name: postgresql
+    state: started
+    enabled: yes
+  become: yes
+  become_user: root
+
+- name: Créer la base de données 'postgres'
+  community.postgresql.postgresql_db:
+    name: "{{ postgresql_db_name }}"
+  become: yes
+  become_user: postgres
+
+- name: Créer l’utilisateur 'postgres' avec mot de passe
+  community.postgresql.postgresql_user:
+    name: "{{ postgresql_user }}"
+    password: "{{ postgresql_password }}"
+    state: present
+  become: yes
+  become_user: postgres
+
+- name: Accorder tous les privilèges sur la DB 'postgres' à l’utilisateur 'postgres'
+  community.postgresql.postgresql_privs:
+    db: "{{ postgresql_db_name }}"
+    roles: postgres
+    type: database
+    privs: all
+  become: yes
+  become_user: postgres
+
+- name: Récupérer le chemin de pg_hba.conf (a faire en dur en premier)
+  ansible.builtin.shell: "/usr/bin/psql -c \"SHOW hba_file;\" | /bin/grep -Eo \"/.*\""
+  register: hba_file_path
+  changed_when: false
+  become: yes
+  become_user: postgres
+
+- name: Configurer l’accès client (pg_hba.conf)
+  community.postgresql.postgresql_pg_hba:
+    dest: "{{ hba_file_path.stdout }}"
+    contype: host
+    databases: all
+    users: all
+    address: all
+    method: md5
+  become: yes
+  become_user: postgres
+
+- name: Autoriser l’écoute sur toutes les interfaces
+  community.postgresql.postgresql_set:
+    name: listen_addresses
+    value: "0.0.0.0"
+  become: yes
+  become_user: postgres
+
+- name: Redémarrer le service PostgreSQL
+  ansible.builtin.service:
+    name: postgresql
+    state: restarted
+  become: yes
+  become_user: root

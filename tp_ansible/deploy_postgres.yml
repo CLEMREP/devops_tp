@@ -1,4 +1,8 @@
-- name: Install postgresql
+#- name: Install postgresql
+#  hosts: all
+#  roles:
+#    - pg_install
+- name: Setup postgresql
   hosts: all
   roles:
-    - pg_install
+    - pg_setup

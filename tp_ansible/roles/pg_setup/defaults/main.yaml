@@ -1,0 +1,23 @@
+---
+# list of packages to install
+postgresql_packages:
+  - postgresql
+  - python3-psycopg2
+
+# service name (Debian/Ubuntu)
+postgresql_service_name: postgresql
+
+# database & user settings
+postgresql_db_name: postgres
+postgresql_user: postgres
+postgresql_password: postgres
+
+# listen on all interfaces
+postgresql_listen_addresses: '0.0.0.0'
+
+# pg_hba settings
+postgresql_hba_type: host
+postgresql_hba_database: all
+postgresql_hba_user: all
+postgresql_hba_address: '0.0.0.0/0'
+postgresql_hba_method: md5

@@ -1,6 +1,6 @@
 ---
 - name: Ajouter la clé GPG du dépôt PostgreSQL
-  ansible.builtin.apt_key:
+  apt_key:
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     state: present
 
@@ -16,7 +16,6 @@
 
 - name: Installer PostgreSQL 15 et les paquets nécessaires
   ansible.builtin.apt:
-    name:
-      - postgresql-{{ postgresql_version }}
-      - python3-psycopg2
+    name: "{{ postgresql_packages }}"
     state: present
+    update_cache: yes
