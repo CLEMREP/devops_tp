@@ -1,0 +1,5 @@
+---
+db_name: "postgres"
+backup_dir: "/tmp"
+local_backup_dir: "/Users/clemrep/Development/IMT/A2/DevOps/devops_tp/backups"
+backup_file: "db_backup.sql"

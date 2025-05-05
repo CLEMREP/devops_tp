@@ -1,0 +1,33 @@
+---
+- name: Créer le répertoire de backup local s'il n'existe pas
+  ansible.builtin.file:
+    path: "{{ local_backup_dir }}"
+    state: directory
+  delegate_to: localhost
+  become: false
+
+- name: Effectuer un dump de la base de données
+  ansible.builtin.shell:
+    cmd: "pg_dump {{ db_name }} > {{ backup_dir }}/{{ backup_file }}"
+  become_user: postgres
+
+- name: Vérifier si le fichier de dump a été créé
+  ansible.builtin.stat:
+    path: "{{ backup_dir }}/{{ backup_file }}"
+  register: dump_stat
+
+- name: Échouer si le dump n'a pas été créé
+  ansible.builtin.fail:
+    msg: "Le fichier de dump n'a pas été créé."
+  when: not dump_stat.stat.exists
+
+- name: Rapatrier le fichier de backup sur la machine locale
+  ansible.builtin.fetch:
+    src: "{{ backup_dir }}/{{ backup_file }}"
+    dest: "{{ local_backup_dir }}/"
+    flat: yes
+
+- name: Supprimer le fichier de backup du serveur
+  ansible.builtin.file:
+    path: "{{ backup_dir }}/{{ backup_file }}"
+    state: absent
