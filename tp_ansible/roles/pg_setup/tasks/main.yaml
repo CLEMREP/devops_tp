@@ -44,11 +44,11 @@
 - name: Configurer l’accès client (pg_hba.conf)
   community.postgresql.postgresql_pg_hba:
     dest: "{{ hba_file_result.query_result[0].hba_file }}"
-    contype: host
-    databases: all
-    users: all
-    address: all
-    method: md5
+    contype: "{{ postgresql_hba_type }}"
+    databases: "{{ postgresql_hba_database }}"
+    users: "{{ postgresql_hba_user }}"
+    address: "{{ postgresql_hba_address }}"
+    method: "{{ postgresql_hba_method }}"
   notify: Redémarrer PostgreSQL
   become: yes
   become_user: postgres

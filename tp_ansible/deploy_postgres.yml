@@ -6,8 +6,3 @@
   hosts: all
   roles:
     - pg_setup
-- name: Réaliser un dump de la base de données PostgreSQL
-  hosts: all
-  become: true
-  roles:
-    - db_backup
