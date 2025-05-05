@@ -1,4 +1,4 @@
-- name: Setup Server
+- name: Install postgresql
   hosts: all
   roles:
-- name: Install postgresql
+    - pg_install
