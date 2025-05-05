@@ -1,0 +1,4 @@
+- name: Setup Server
+  hosts: all
+  roles:
+- name: Install postgresql
