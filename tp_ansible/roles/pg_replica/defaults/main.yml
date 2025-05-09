@@ -1,0 +1,14 @@
+---
+# Variables de réplication PostgreSQL
+backup_dir: /tmp/postgres_backup
+backup_file: "{{ backup_dir }}/postgres_backup.sql"
+db_name: "{{ postgresql_db_name }}"
+db_user: "{{ postgresql_user }}"
+db_password: "{{ postgresql_password }}"
+
+# Replica specific variables
+postgresql_replica:
+  db_name: "{{ postgresql_db_name }}"
+  db_user: "{{ postgresql_user }}"
+  db_password: "{{ postgresql_password }}"
+  backup_file: "{{ backup_file }}" 

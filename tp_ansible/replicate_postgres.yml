@@ -1,0 +1,5 @@
+---
+- name: Synchroniser la réplique PostgreSQL
+  hosts: postgresql
+  roles:
+    - pg_replica 

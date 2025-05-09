@@ -1,8 +1,10 @@
-- name: Installer postgresql
-  hosts: all
+---
+- name: Installer PostgreSQL sur toutes les VMs
+  hosts: postgresql
   roles:
     - pg_install
-- name: Setup postgresql
-  hosts: all
+
+- name: Configurer PostgreSQL sur la VM principale
+  hosts: postgresql
   roles:
     - pg_setup

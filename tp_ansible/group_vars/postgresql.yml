@@ -1,0 +1,12 @@
+---
+# Variables globales pour PostgreSQL
+postgresql_db_name: postgres
+postgresql_user: postgres
+postgresql_password: postgres  # À changer en production !
+
+# Configuration HBA
+postgresql_hba_type: host
+postgresql_hba_database: all
+postgresql_hba_user: all
+postgresql_hba_address: 0.0.0.0/0
+postgresql_hba_method: md5 

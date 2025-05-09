@@ -1,0 +1,57 @@
+---
+- name: Create backup directory
+  ansible.builtin.file:
+    path: "{{ backup_dir }}"
+    state: directory
+    mode: '0755'
+    owner: postgres
+    group: postgres
+
+- name: Dump PostgreSQL database on primary
+  ansible.builtin.shell: >
+    PGPASSWORD={{ db_password }} pg_dump -h localhost -U {{ db_user }} {{ db_name }} > {{ backup_file }}
+  become: yes
+  become_user: postgres
+  when: postgresql_role == 'primary'
+
+- name: Copy backup file from primary to replica
+  ansible.builtin.synchronize:
+    src: "{{ backup_file }}"
+    dest: "{{ backup_file }}"
+  delegate_to: vm1
+  when: postgresql_role == 'replica'
+
+- name: Terminate existing connections to database on replica
+  ansible.builtin.shell: >
+    PGPASSWORD={{ db_password }} psql -h localhost -U {{ db_user }} template1 -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{{ db_name }}';"
+  become: yes
+  become_user: postgres
+  when: postgresql_role == 'replica'
+
+- name: Drop database on replica
+  ansible.builtin.shell: >
+    PGPASSWORD={{ db_password }} psql -h localhost -U {{ db_user }} template1 -c "DROP DATABASE IF EXISTS {{ db_name }};"
+  become: yes
+  become_user: postgres
+  when: postgresql_role == 'replica'
+
+- name: Create database on replica
+  ansible.builtin.shell: >
+    PGPASSWORD={{ db_password }} psql -h localhost -U {{ db_user }} template1 -c "CREATE DATABASE {{ db_name }};"
+  become: yes
+  become_user: postgres
+  when: postgresql_role == 'replica'
+
+- name: Restore database on replica
+  ansible.builtin.shell: >
+    PGPASSWORD={{ db_password }} psql -h localhost -U {{ db_user }} {{ db_name }} < {{ backup_file }}
+  become: yes
+  become_user: postgres
+  when: postgresql_role == 'replica'
+
+- name: Clean up backup files
+  ansible.builtin.file:
+    path: "{{ backup_file }}"
+    state: absent
+  become: yes
+  become_user: root

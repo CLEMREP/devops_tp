@@ -1,12 +1,16 @@
 all:
-  hosts:
-    vm1:
-      ansible_host: 10.129.177.252
-      ansible_user: root
-      ansible_port: 22
-      ansible_password: aqwz
-    vm2:
-      ansible_host: 10.129.179.45
-      ansible_user: root
-      ansible_port: 22
-      ansible_password: aqwz
+  children:
+    postgresql:
+      hosts:
+        vm1:
+          ansible_host: 10.129.177.252
+          ansible_user: root
+          ansible_port: 22
+          ansible_password: aqwz
+          postgresql_role: primary
+        vm2:
+          ansible_host: 10.129.179.45
+          ansible_user: root
+          ansible_port: 22
+          ansible_password: aqwz
+          postgresql_role: replica
