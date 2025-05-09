@@ -12,7 +12,7 @@
   become: yes
   become_user: postgres
 
-- name: Créer l’utilisateur 'postgres' avec mot de passe
+- name: Créer l'utilisateur 'postgres' avec mot de passe
   community.postgresql.postgresql_user:
     name: "{{ postgresql_user }}"
     password: "{{ postgresql_password }}"
@@ -20,7 +20,7 @@
   become: yes
   become_user: postgres
 
-- name: Accorder tous les privilèges sur la DB 'postgres' à l’utilisateur 'postgres'
+- name: Accorder tous les privilèges sur la DB 'postgres' à l'utilisateur 'postgres'
   community.postgresql.postgresql_privs:
     type: database
     db: "{{ postgresql_db_name }}"
@@ -41,7 +41,7 @@
   ansible.builtin.debug:
     var: hba_file_result
 
-- name: Configurer l’accès client (pg_hba.conf)
+- name: Configurer l'accès client (pg_hba.conf)
   community.postgresql.postgresql_pg_hba:
     dest: "{{ hba_file_result.query_result[0].hba_file }}"
     contype: "{{ postgresql_hba_type }}"
@@ -53,10 +53,44 @@
   become: yes
   become_user: postgres
 
-- name: Autoriser l’écoute sur toutes les interfaces
+- name: Autoriser l'écoute sur toutes les interfaces
   community.postgresql.postgresql_set:
     name: listen_addresses
     value: "0.0.0.0"
+  notify: Redémarrer PostgreSQL
+  become: yes
+  become_user: postgres
+
+- name: Set vm.vfs_cache_pressure to 90 immediately
+  ansible.builtin.sysctl:
+    name: vm.vfs_cache_pressure
+    value: 90
+    state: present
+    reload: yes
+  become: yes
+  become_user: root
+
+- name: Ensure vm.vfs_cache_pressure is persistent
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    regexp: '^vm\.vfs_cache_pressure'
+    line: 'vm.vfs_cache_pressure = 90'
+  become: yes
+  become_user: root
+
+- name: Calculate shared_buffers value
+  ansible.builtin.set_fact:
+    shared_buffers_mb: >-
+      {{
+        (ansible_memtotal_mb * 0.15) | int
+        if ansible_memtotal_mb < 1024
+        else (ansible_memtotal_mb * 0.25) | int
+      }}
+
+- name: Set shared_buffers in postgresql.conf dynamically
+  community.postgresql.postgresql_set:
+    name: shared_buffers
+    value: "{{ shared_buffers_mb }}MB"
   notify: Redémarrer PostgreSQL
   become: yes
   become_user: postgres
