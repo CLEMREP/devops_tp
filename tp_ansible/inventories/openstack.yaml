@@ -5,4 +5,8 @@ all:
       ansible_user: root
       ansible_port: 22
       ansible_password: aqwz
-
+    vm2:
+      ansible_host: 10.129.179.45
+      ansible_user: root
+      ansible_port: 22
+      ansible_password: aqwz
