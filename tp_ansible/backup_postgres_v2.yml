@@ -1,6 +1,6 @@
 ---
 - name: Backup PostgreSQL
-  hosts: all
+  hosts: vm1
   gather_facts: true  # Required for ansible_date_time
   pre_tasks:
     - name: Ensure pg_dump version is 15

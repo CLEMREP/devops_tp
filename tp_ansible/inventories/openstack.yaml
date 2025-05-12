@@ -2,13 +2,13 @@ all:
   children:
     postgresql:
       hosts:
-        vm1:
+        vm1: ## PRIMARY
           ansible_host: 10.129.177.252
           ansible_user: root
           ansible_port: 22
           ansible_password: aqwz
           postgresql_role: primary
-        vm2:
+        vm2: ## REPLICA
           ansible_host: 10.129.179.45
           ansible_user: root
           ansible_port: 22

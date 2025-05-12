@@ -1,4 +1,4 @@
 - name: Backup PostgreSQL
-  hosts: all
+  hosts: vm1
   roles:
     - pg_backup
