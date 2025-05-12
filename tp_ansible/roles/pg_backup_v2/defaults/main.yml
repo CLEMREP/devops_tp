@@ -1,0 +1,9 @@
+---
+# Database connection parameters
+db_user: "{{ postgresql_user }}"
+db_password: "{{ postgresql_password }}"
+db_name: "{{ postgresql_db_name }}"
+
+# Backup configuration
+local_backup_dir: "{{ playbook_dir }}/backups"
+backup_file: "backup_{{ db_name }}_{{ ansible_date_time.iso8601_basic_short }}.sql" 

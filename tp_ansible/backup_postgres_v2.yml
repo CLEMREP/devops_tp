@@ -1,0 +1,20 @@
+---
+- name: Backup PostgreSQL
+  hosts: all
+  gather_facts: true  # Required for ansible_date_time
+  pre_tasks:
+    - name: Ensure pg_dump version is 15
+      ansible.builtin.command: which pg_dump
+      delegate_to: localhost
+      register: pg_dump_check
+      changed_when: false
+      failed_when: false
+
+    - name: Fail if pg_dump is not installed
+      ansible.builtin.fail:
+        msg: "pg_dump is not installed on the controller machine. Please install postgresql-client package."
+      when: pg_dump_check.rc != 0
+      delegate_to: localhost
+
+  roles:
+    - pg_backup_v2

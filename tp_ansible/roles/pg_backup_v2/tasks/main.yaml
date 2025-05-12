@@ -1,0 +1,26 @@
+---
+- name: Créer le répertoire de backup local s'il n'existe pas
+  ansible.builtin.file:
+    path: "{{ local_backup_dir }}"
+    state: directory
+  delegate_to: localhost
+  become: false
+
+- name: Effectuer un dump de la base de données directement depuis le controller
+  ansible.builtin.shell:
+    cmd: "PGPASSWORD={{ db_password }} pg_dump -h {{ ansible_host }} -U {{ db_user }} {{ db_name }} > {{ local_backup_dir }}/{{ backup_file }}"
+  delegate_to: localhost
+  become: false
+  register: dump_result
+
+- name: Échouer si le dump n'a pas réussi
+  ansible.builtin.fail:
+    msg: "Le dump de la base de données a échoué."
+  when: dump_result.rc != 0
+
+- name: Vérifier si le fichier de dump a été créé
+  ansible.builtin.stat:
+    path: "{{ local_backup_dir }}/{{ backup_file }}"
+  register: dump_stat
+  delegate_to: localhost
+
