@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - worker.yaml
+  - postgres.yaml
+  - redis.yaml
+  - result.yaml
+  - seed.yaml
+  - vote.yaml
+
+labels:
+  - pairs:
+      app: voting-app
+      environment: base
