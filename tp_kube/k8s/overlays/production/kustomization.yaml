@@ -4,25 +4,9 @@ kind: Kustomization
 resources:
   - ../../base
   - namespace.yaml
-
+  
 namespace: production
 
 labels:
   - pairs:
       environment: production
-
-patches:
-  - target:
-      kind: Deployment
-      name: vote
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 2
-  - target:
-      kind: Deployment
-      name: result
-    patch: |-
-      - op: replace
-        path: /spec/replicas
-        value: 2 
