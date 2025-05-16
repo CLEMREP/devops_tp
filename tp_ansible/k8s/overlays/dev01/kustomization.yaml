@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+  - namespace.yaml
+  - postgres.yaml
+
+namespace: dev01
+
+labels:
+  - pairs:
+      environment: dev01
+
+patches:
+  - target:
+      kind: Service
+      name: vote
+    patch: |-
+      - op: replace
+        path: /spec/ports/0/port
+        value: 9001
+  - target:
+      kind: Service
+      name: result
+    patch: |-
+      - op: replace
+        path: /spec/ports/0/port
+        value: 9002

@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      initContainers:
+        - name: setup-healthchecks
+          image: alpine:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              apk add --no-cache git;
+              git clone https://gitlab.imt-atlantique.fr/login-nuage/healthchecks.git /healthchecks;
+          volumeMounts:
+            - name: healthchecks
+              mountPath: /healthchecks
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          env:
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+            - name: POSTGRES_DB
+              value: "postgres"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: healthchecks
+              mountPath: /healthchecks
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+          livenessProbe:
+            exec:
+              command: ["/bin/sh", "-c", "/healthchecks/postgres.sh"]
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: healthchecks
+          emptyDir: {}
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard
