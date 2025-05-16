@@ -98,7 +98,19 @@ cd tp_ansible
 
 2. Configurer les VMs et déployer les bases de données :
 ```shell
-# À compléter avec les commandes spécifiques
+ansible-playbook deploy_postgres.yml
+```
+
+3. Backup de la base de données :
+```shell
+ansible-playbook pg_backup.yml
+# Ou
+ansible-playbook pg_backup_v2.yml
+```
+
+4. Replication de la base de données :
+```shell
+ansible-playbook pg_replica.yml
 ```
 
 ## Prérequis
