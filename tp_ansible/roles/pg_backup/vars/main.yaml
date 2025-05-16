@@ -1,5 +1,8 @@
 ---
 db_name: "postgres"
 backup_dir: "/tmp"
-local_backup_dir: "/Users/clemrep/Development/IMT/A2/DevOps/devops_tp/backups"
-backup_file: "db_backup.sql"
+local_backup_dir: "../backups"
+backup_file: "backupv1_{{ db_name }}_{{ ansible_date_time.iso8601_basic_short }}.sql"
+
+db_user: "postgres"
+db_password: "postgres"

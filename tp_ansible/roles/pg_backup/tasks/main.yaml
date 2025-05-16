@@ -8,8 +8,10 @@
 
 - name: Effectuer un dump de la base de données
   ansible.builtin.shell:
-    cmd: "pg_dump {{ db_name }} > {{ backup_dir }}/{{ backup_file }}"
+    cmd: "pg_dump -U postgres -h localhost {{ db_name }} > {{ backup_dir }}/{{ backup_file }}"
   become_user: postgres
+  environment:
+    PGPASSWORD: "{{ db_password }}"
 
 - name: Vérifier si le fichier de dump a été créé
   ansible.builtin.stat:
@@ -31,25 +33,3 @@
   ansible.builtin.file:
     path: "{{ backup_dir }}/{{ backup_file }}"
     state: absent
-
-
-#########
-# BONUS #
-#########
-#- name: Effectuer un dump de la base de données dans un fichier temporaire
-#  ansible.builtin.shell:
-#    cmd: "pg_dump {{ db_name }} > {{ backup_dir }}/{{ backup_file }}"
-#  become: yes
-#  become_user: postgres
-
-#- name: Rapatrier le fichier de dump sur la machine locale
-#  ansible.builtin.fetch:
-#    src: "{{ backup_dir }}/{{ backup_file }}"
-#    dest: "{{ local_backup_dir }}/"
-#    flat: yes
-
-#- name: Supprimer le fichier temporaire du serveur
-#  ansible.builtin.file:
-#    path: "{{ backup_dir }}/{{ backup_file }}"
-#    state: absent
-#  become: yes
