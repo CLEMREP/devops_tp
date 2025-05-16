@@ -126,10 +126,11 @@ kubectl apply -k k8s/overlays/dev01
 Nous avons utilisé Kustomize pour gérer des configurations Kubernetes différentes pour simuler plusieurs environnements.
 
 Dans base nous avons le déploiement des applications.
+
 Dans overlays dev01 nous ajoutons le déploiement d'une base de données interne au cluster PostgreSQL 
 avec un PVC interne au cluster. 
 
-Dans overlays production nous utilisons EndpointSlice pour utiliser la base de données externe crée avec Ansible.
+Dans overlays production nous utilisons EndpointSlice pour utiliser la base de données externe crée avec Ansible. Et nous ajoutons un Horizontal Pod AutoScaler pour mutliplier le nombre de pod du service vote.
 
 
 ## Prérequis
