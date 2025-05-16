@@ -8,7 +8,7 @@
 
 - name: Effectuer un dump de la base de données
   ansible.builtin.shell:
-    cmd: "pg_dump -U postgres -h localhost {{ db_name }} > {{ backup_dir }}/{{ backup_file }}"
+    cmd: "pg_dump -U {{ db_user}} -h localhost {{ db_name }} > {{ backup_dir }}/{{ backup_file }}"
   become_user: postgres
   environment:
     PGPASSWORD: "{{ db_password }}"
